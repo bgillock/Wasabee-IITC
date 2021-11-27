@@ -1234,7 +1234,29 @@ export default class WasabeeOp extends Evented implements IOperation {
   }
 
   changes(origin?: WasabeeOp) {
-    const changes = {
+    interface PortalType {
+      type: "portal";
+      portal: WasabeePortal;
+    }
+    interface LinkType {
+      type: "link";
+      link: WasabeeLink;
+    }
+    interface MarkerType {
+      type: "marker";
+      marker: WasabeeMarker;
+    }
+    interface OpChanges {
+      addition: (PortalType | LinkType | MarkerType)[];
+      edition: ((PortalType | LinkType | MarkerType) & {
+        diff: [string, any][];
+      })[];
+      deletion: ((LinkType | MarkerType) & { id: TaskID })[];
+      name: string;
+      color: string;
+      comment: string;
+    }
+    const changes: OpChanges = {
       addition: [],
       edition: [],
       deletion: [],
@@ -1262,7 +1284,7 @@ export default class WasabeeOp extends Evented implements IOperation {
         const fields = ["comment", "hardness"];
         const diff = fields
           .filter((k) => oldPortal[k] != p[k])
-          .map((k) => [k, oldPortal[k]]);
+          .map((k) => [k, oldPortal[k]] as [string, any]);
         if (diff.length > 0)
           changes.edition.push({ type: "portal", portal: p, diff: diff });
       }
@@ -1290,7 +1312,7 @@ export default class WasabeeOp extends Evented implements IOperation {
         ];
         const diff = fields
           .filter((k) => oldLink[k] != l[k])
-          .map((k) => [k, oldLink[k]]);
+          .map((k) => [k, oldLink[k]] as [string, any]);
         if (diff.length > 0)
           changes.edition.push({ type: "link", link: l, diff: diff });
       }
@@ -1316,7 +1338,7 @@ export default class WasabeeOp extends Evented implements IOperation {
         ];
         const diff = fields
           .filter((k) => oldMarker[k] != m[k])
-          .map((k) => [k, oldMarker[k]]);
+          .map((k) => [k, oldMarker[k]] as [string, any]);
         if (diff.length > 0)
           changes.edition.push({ type: "marker", marker: m, diff: diff });
       }
@@ -1341,7 +1363,7 @@ export default class WasabeeOp extends Evented implements IOperation {
 
   // currently overwrite zones instead of ignoring conflict
   mergeZones(op: WasabeeOp) {
-    const ids = new Map();
+    const ids = new Map<ZoneID, WasabeeZone>();
     let count = 0;
     for (const z of this.zones) {
       ids.set(z.id, z);
@@ -1364,7 +1386,7 @@ export default class WasabeeOp extends Evented implements IOperation {
   }
 
   // assume that `this` is a server OP (teams/keys are correct)
-  applyChanges(changes, op: WasabeeOp) {
+  applyChanges(changes: ReturnType<WasabeeOp["changes"]>, op: WasabeeOp) {
     const summary = {
       compatibility: {
         ok: true,
