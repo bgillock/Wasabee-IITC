@@ -74,6 +74,13 @@ const OperationChecklistDialog = WDialog.extend({
     buttons[wX("SET_LINKS_ZONES")] = () => {
       setLinksToZones();
     };
+    buttons["Toggle Filter"] = () => {
+      this.sortable.filter = !this.sortable.filter;
+    };
+    const picker = this.getBulkPicker();
+    buttons["Color Filtered"] = () => {
+      picker.click();
+    };
 
     await this.sortable.done;
 
@@ -99,6 +106,23 @@ const OperationChecklistDialog = WDialog.extend({
     );
     await this.sortable.done;
     this.setContent(this.sortable.table);
+  },
+
+  getBulkPicker: function () {
+    const picker = L.DomUtil.create("input", "hidden-color-picker");
+    picker.type = "color";
+    picker.value = "#000000";
+    picker.setAttribute("list", "wasabee-colors-datalist");
+
+    L.DomEvent.on(picker, "change", (ev) => {
+      const color = ev.target.value;
+      const filtered = this.sortable.getFiltered();
+      for (const l of filtered) {
+        l.color = color;
+      }
+      getSelectedOperation().update();
+    });
+    return picker;
   },
 
   getFields: function (operation) {
@@ -187,6 +211,11 @@ const OperationChecklistDialog = WDialog.extend({
           });
         },
         smallScreenHide: true,
+        filter: (thing, value, filterValue) =>
+          operation
+            .zoneName(value)
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()),
       },
       {
         name: wX("COMMENT"),
@@ -208,6 +237,8 @@ const OperationChecklistDialog = WDialog.extend({
           }
         },
         smallScreenHide: true,
+        filter: (thing, value, filterValue) =>
+          (value || "").toLowerCase().includes(filterValue.toLowerCase()),
       },
       {
         name: wX("ASS_TO"),
@@ -234,6 +265,8 @@ const OperationChecklistDialog = WDialog.extend({
           }
         },
         smallScreenHide: true,
+        filter: (thing, value, filterValue) =>
+          (value || "").toLowerCase().includes(filterValue.toLowerCase()),
       },
       {
         name: wX("STATE"),
@@ -256,6 +289,8 @@ const OperationChecklistDialog = WDialog.extend({
           }
         },
         smallScreenHide: true,
+        filter: (thing, value, filterValue) =>
+          (value || "").toLowerCase().includes(filterValue.toLowerCase()),
       },
     ];
     if (canWrite)
@@ -301,6 +336,7 @@ const OperationChecklistDialog = WDialog.extend({
     content.sortBy = sortBy;
     content.sortAsc = sortAsc;
     content.items = items;
+    if (this.sortable) content.importFilterFrom(this.sortable);
     return content;
   },
 
