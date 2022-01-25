@@ -3,7 +3,7 @@ import wX from "../wX";
 import { getSelectedOperation } from "../selectedOp";
 import { addToColorList } from "../skin";
 import ZoneSetColorDialog from "./zoneSetColor";
-import { convertColorToHex } from "../auxiliar";
+import { appendFAIcon, convertColorToHex } from "../auxiliar";
 import { setMarkersToZones, setLinksToZones } from "../uiCommands";
 
 const ZoneDialog = WDialog.extend({
@@ -118,7 +118,7 @@ const ZoneDialog = WDialog.extend({
         const commandcell = L.DomUtil.create("td", "actions", tr);
 
         const color = L.DomUtil.create("a", null, commandcell);
-        L.DomUtil.create("i", "fas fa-palette", color);
+        appendFAIcon("palette", color);
         color.href = "#";
         L.DomEvent.on(color, "click", (ev) => {
           L.DomEvent.stop(ev);
@@ -129,7 +129,7 @@ const ZoneDialog = WDialog.extend({
         });
         if (z.id != 1) {
           const del = L.DomUtil.create("a", null, commandcell);
-          L.DomUtil.create("i", "fas fa-trash", del);
+          appendFAIcon("trash", del);
           del.href = "#";
           L.DomEvent.on(del, "click", (ev) => {
             L.DomEvent.stop(ev);
@@ -143,7 +143,7 @@ const ZoneDialog = WDialog.extend({
         ) {
           const stopDrawing = L.DomUtil.create("a", null, commandcell);
           stopDrawing.href = "#";
-          L.DomUtil.create("i", "fas fa-ban", stopDrawing);
+          appendFAIcon("ban", stopDrawing);
           L.DomEvent.on(stopDrawing, "click", (ev) => {
             L.DomEvent.stop(ev);
             this.ZonedrawHandler.disable();
@@ -152,7 +152,7 @@ const ZoneDialog = WDialog.extend({
         } else {
           if (z.points.length == 0) {
             const addPoints = L.DomUtil.create("a", null, commandcell);
-            L.DomUtil.create("i", "fas fa-pen", addPoints);
+            appendFAIcon("pen", addPoints);
             addPoints.href = "#";
             L.DomEvent.on(addPoints, "click", (ev) => {
               L.DomEvent.stop(ev);
@@ -162,7 +162,7 @@ const ZoneDialog = WDialog.extend({
             });
           } else {
             const delPoints = L.DomUtil.create("a", null, commandcell);
-            L.DomUtil.create("i", "fas fa-eraser", delPoints);
+            appendFAIcon("eraser", delPoints);
             delPoints.href = "#";
             L.DomEvent.on(delPoints, "click", (ev) => {
               L.DomEvent.stop(ev);
