@@ -52,6 +52,14 @@
 }
 /* .wasabee-table td.menu { position: relative; min-height: 20px; min-width: 24px; } */
 
+.wasabee-table > thead .sortable .filter {
+  width: 100%;
+}
+.wasabee-table > thead .sortable.asc .filter,
+.wasabee-table > thead .sortable.desc .filter {
+  width: calc(100% - 1.1rem);
+}
+
 .wasabee-dialog-agent ul {
   padding-left: 0;
 }
@@ -229,7 +237,9 @@
   font-weight: bold;
 }
 
-.wasabee-dialog-linklist {
+.wasabee-dialog-checklist th input,
+.wasabee-dialog-linklist th input {
+  width: 100%;
 }
 
 .wasabee-dialog-manageteam {
