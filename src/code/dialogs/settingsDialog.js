@@ -199,7 +199,7 @@ const SettingsDialog = WDialog.extend({
     };
 
     this.createDialog({
-      title: wX("SETTINGS"),
+      title: wX("SETTINGS_TITLE"),
       html: container,
       width: "auto",
       dialogClass: "settings",
